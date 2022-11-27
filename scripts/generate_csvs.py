@@ -25,8 +25,7 @@ for fruit in fruits:
         if os.path.isfile(f) and f.endswith(".png"):
             train_pair = ['images/'+fruit+filename, 'labels/'+fruit+filename]
             file_list.append(train_pair)
-'''
+
 with open('image_train_pngs.csv', 'w') as f:
     write = csv.writer(f)
     write.writerows(file_list)
-'''
