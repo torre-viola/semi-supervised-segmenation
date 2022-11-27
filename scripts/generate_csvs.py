@@ -1,7 +1,6 @@
 import csv
 import os
 from PIL import Image
-import random
 
 
 """
