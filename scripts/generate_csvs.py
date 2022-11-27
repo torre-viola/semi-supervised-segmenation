@@ -62,13 +62,24 @@ for filename in os.listdir(appleA_dir):
         new_name = pathname+".png"
         img.save(pathname+".png")
 """
-with open(main_directory+'/labels/AppleA/train.txt', 'r') as f:
+with open(main_directory+'labels/AppleA/train.txt', 'r') as f:
     appleA_train_raw = f.readlines()
-appleA_train = [i.replace("IMG_0", "").replace("\n", "") for i in appleA_train_raw]
 
-with open(main_directory+'/labels/AppleA/train.txt', 'r') as f:
+appleA_train = []
+for apple in appleA_train_raw:
+    new_apple = apple.replace("IMG_0", "")
+    new_apple = new_apple.replace(".JPG\n", ".png")
+    appleA_train.append(['images/AppleA/'+new_apple, 'labels/AppleA/'+new_apple])
+
+with open(main_directory+'labels/AppleA/val.txt', 'r') as f:
     appleA_valid_raw = f.readlines()
-appleA_valid = [i.replace("IMG_0", "").replace(".JPG\n", ".png") for i in appleA_valid_raw]
+
+appleA_valid = []
+for apple in appleA_valid_raw:
+    new_apple = apple.replace("IMG_0", "")
+    new_apple = new_apple.replace(".JPG\n", ".png")
+    appleA_valid.append(['images/AppleA/'+new_apple, 'labels/AppleA/'+new_apple])
+
 print("Finished AppleA Processing, moving on")
 
 # iterate over the remaining fruit classes
