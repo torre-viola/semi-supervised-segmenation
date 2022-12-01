@@ -1,0 +1,72 @@
+
+Log onto VPN
+Log on via VSCode
+
+# load python 3.7 Cuda 10.1
+module load python3/3.7.0 cuda/10.1
+
+# Create Venv 
+virtualenv --system-site-packages -p python3.7 ./venv297
+
+# Activate Venv
+source ./venv297/bin/activate
+
+# Pip install PYMIC
+pip install PYMIC
+
+# Clone Pymic
+git clone https://github.com/HiLab-git/PyMIC
+
+# Go into folder and install requirements
+cd PyMIC
+pip install -r requirements.txt
+
+# change torch install to 1.7.1 and torch vision to 0.8.2 to be able to match CUDA version on HPC
+pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 -f https://download.pytorch.org/whl/torch_stable.html
+
+# Found bugs related to SimpleITK, need to downgrade to work
+pip install SimpleITK==2.0.2 
+
+# cd into pymic
+cd pymic
+
+# clone PyMIC_examples
+git clone https://github.com/HiLab-git/PyMIC_examples.git
+
+# drag and drop PyMic_data folder into PyMIC_examples (download to local computer and drop into PyMIC_examples)
+# data at https://drive.google.com/file/d/1-LrMHsX7ZdBto2iC1WnbFFZ0tDeJQFHy/view
+
+# back out into home folder (one above PyMIC)
+cd ..
+
+# enter into GPU
+srun -p gpu --gres=gpu --pty /bin/bash 
+
+# reactivate Venv
+source ./venv297/bin/activate
+
+# copy cuda files
+cp /usr/local/cuda-10.0/targets/x86_64-linux/lib/libcublas.so.10.0 /home/015301546
+mv libcublas.so.10.0 libcublas.so.10
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/015301546
+
+# cd into the ACDC folder for running of data
+cd PyMIC/pymic/PyMIC_examples/seg_ssl/ACDC
+
+# run this code
+pymic_run train config/unet2d_baseline.cfg 
+
+# you will get an error saying OrderedDict cannot be loaded from Typing
+# open the maxvit.py file that has the issue and delete the OrderedDict from the import from typing
+# add a line that says 'from collections import OrderedDict'
+
+# run again
+pymic_run train config/unet2d_baseline.cfg 
+
+
+# Run test
+pymic_run test config/unet2d_baseline.cfg 
+
+
+# get evaluation metrics
+pymic_eval_seg evaluation.cfg
